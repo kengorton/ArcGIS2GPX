@@ -35,7 +35,7 @@ https://arcgis2gpx.azurewebsites.net/api/Layers2GPX?url=https://services1.arcgis
  
 
 The minimum payload for a POST request is a json object with a title element (which will become the output GPX filename) and an array of feature layer urls. Thus you can combine multiple point and/or polyline feature layers into a single GPX file. Example:
-
+````
 {
  "title":"Some Trails",
  "returnFile":"true",
@@ -54,6 +54,7 @@ The minimum payload for a POST request is a json object with a title element (wh
  }
  ]
 }
+````
 
 Additionally, both methods allow you to include optional parameters for each url to indicate wich fields from the source feature layers to utilize for the different GPX elements such as
 name, desc, cmt, etc
