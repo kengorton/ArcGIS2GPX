@@ -131,7 +131,7 @@ Additionally, POST requests include the following:
 **title:** required. The name of the GPX file to be returned.
 
 **example POST request payload:**
-
+````
 {
   "title": "Some Trails",
   "returnFile": "true",
@@ -153,3 +153,4 @@ Additionally, POST requests include the following:
     }
   ]
 }
+````
