@@ -77,33 +77,33 @@ Function url: https://arcgis2gpx.azurewebsites.net/api/Layers2GPX
 GET requests will accept one value for each of the parameters.
 POST requests will accept an array of JSON objects each containing one value for each of the parameters. This allows you to combine multiple point and/or polyline feature layers into a single output GPX file.
 
-Parameters:
-url: required. The url to a portal feature layer. This should end in 'FeatureService/n' where n is the layer index.
-returnFile: optional. If true, returns a GPX file. If false, returns a string. Defaults to true.
-where: optional. The where clause to limit the features included in the GPX data. Defaults '1=1'.
-name: optional. The name of the field in the feature layer that should provide the name values for each track or waypoint element.
-cmt: optional. The name of the field in the feature layer that should provide the cmt values for each track or waypoint element.
-desc: optional. The name of the field in the feature layer that should provide the desc values for each track or waypoint element.
-src: optional. The name of the field in the feature layer that should provide the src values for each track or waypoint element.
-type: optional. The name of the field in the feature layer that should provide the type values for each track or waypoint element.
-sym: optional. The name of the field in the feature layer that should provide the sym values for each waypoint element. Ignored for polyline layers.
-ele: optional. The name of the field in the feature layer that should provide the ele values for each waypoint element. If not present and if the point geometries have z values, the function will attempt to use feature geometry z values. If this parameter is included in the request the values from this field will supercede geometry z values. Ignored for polyline layers.
-time: optional. The name of the field in the feature layer that should provide the time values for each waypoint element. Ignored for polyline layers.
-magvar: optional. The name of the field in the feature layer that should provide the magvar values for each waypoint element. Ignored for polyline layers.
-geoidheight: optional. The name of the field in the feature layer that should provide the geoidheight values for each waypoint element. Ignored for polyline layers.
-fix: optional. The name of the field in the feature layer that should provide the fix values for each wptType element. Ignored for polyline layers.
-sat: optional. The name of the field in the feature layer that should provide the sat values for each wptType element. Ignored for polyline layers.
-hdop: optional. The name of the field in the feature layer that should provide the hdop values for each wptType element. Ignored for polyline layers.
-vdop: optional. The name of the field in the feature layer that should provide the vdop values for each wptType element. Ignored for polyline layers.
-pdop: optional. The name of the field in the feature layer that should provide the pdop values for each wptType element. Ignored for polyline layers.
-ageofgpsdata: optional. The name of the field in the feature layer that should provide the ageofgpsdata values for each wptType element. Ignored for polyline layers.
-dgpsid: optional. The name of the field in the feature layer that should provide the dgpsid values for each wptType element. Ignored for polyline layers.
-number: optional. The name of the field in the feature layer that should provide the number values for each trkType element. Ignored for point layers.
+## Parameters:
+**url:** required. The url to a portal feature layer. This should end in 'FeatureService/n' where n is the layer index.
+**returnFile:**  optional. If true, returns a GPX file. If false, returns a string. Defaults to true.
+**where:** optional. The where clause to limit the features included in the GPX data. Defaults '1=1'.
+**name:** optional. The name of the field in the feature layer that should provide the name values for each track or waypoint element.
+**cmt:** optional. The name of the field in the feature layer that should provide the cmt values for each track or waypoint element.
+**desc:** optional. The name of the field in the feature layer that should provide the desc values for each track or waypoint element.
+**src:** optional. The name of the field in the feature layer that should provide the src values for each track or waypoint element.
+**type:** optional. The name of the field in the feature layer that should provide the type values for each track or waypoint element.
+**sym:** optional. The name of the field in the feature layer that should provide the sym values for each waypoint element. Ignored for polyline layers.
+**ele:** optional. The name of the field in the feature layer that should provide the ele values for each waypoint element. If not present and if the point geometries have z values, the function will attempt to use feature geometry z values. If this parameter is included in the request the values from this field will supercede geometry z values. Ignored for polyline layers.
+**time:** optional. The name of the field in the feature layer that should provide the time values for each waypoint element. Ignored for polyline layers.
+**magvar:** optional. The name of the field in the feature layer that should provide the magvar values for each waypoint element. Ignored for polyline layers.
+**geoidheight:** optional. The name of the field in the feature layer that should provide the geoidheight values for each waypoint element. Ignored for polyline layers.
+**fix:** optional. The name of the field in the feature layer that should provide the fix values for each wptType element. Ignored for polyline layers.
+**sat:** optional. The name of the field in the feature layer that should provide the sat values for each wptType element. Ignored for polyline layers.
+**hdop:** optional. The name of the field in the feature layer that should provide the hdop values for each wptType element. Ignored for polyline layers.
+**vdop:** optional. The name of the field in the feature layer that should provide the vdop values for each wptType element. Ignored for polyline layers.
+**pdop:** optional. The name of the field in the feature layer that should provide the pdop values for each wptType element. Ignored for polyline layers.
+**ageofgpsdata:** optional. The name of the field in the feature layer that should provide the ageofgpsdata values for each wptType element. Ignored for polyline layers.
+**dgpsid:** optional. The name of the field in the feature layer that should provide the dgpsid values for each wptType element. Ignored for polyline layers.
+**number:** optional. The name of the field in the feature layer that should provide the number values for each trkType element. Ignored for point layers.
 
 example GET request: https://arcgis2gpx.azurewebsites.net/api/Layers2GPX?url=https://maps.arcgis.com/ArcGIS/rest/services/<<service name>>/FeatureServer/<<layer index>>&returnFile=true&name=featureNameField
 
 Additionally, POST requests include the following:
-title: required. The name of the GPX file to be returned.
+**title:** required. The name of the GPX file to be returned.
 example POST request payload:
 {
   "title": "Some Trails",
