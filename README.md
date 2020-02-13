@@ -71,17 +71,18 @@ If you find an error in functinality or behavior, please also let me know.
 
 #  Usage:
 
-https://arcgis2gpx.azurewebsites.net/api/Layers2GPX converts ArcGIS features to GPX elements and returns a file of the data for use in GPS devices. THe GPX data follows the spec detailed at http://www.topografix.com/GPX/1/1/.
+https://arcgis2gpx.azurewebsites.net/api/Layers2GPX converts ArcGIS features to GPX elements and returns a file of the data for use in GPS devices. The GPX data follows the spec detailed at http://www.topografix.com/GPX/1/1/.
 
 Function url: https://arcgis2gpx.azurewebsites.net/api/Layers2GPX
 
-GET requests will accept one value for each of the parameters.
-
-POST requests will accept an array of JSON objects each containing one value for each of the parameters. This allows you to combine multiple point and/or polyline feature layers into a single output GPX file.
+GET requests will accept one value for each of the parameters except the 'content' parameter which will accept a comma-separated list of route layer itemIds or the url to a single feature layer.
+POST requests will accept an array of JSON objects each containing a value for each included parameter. This allows you to combine multiple point and/or polyline feature layers into a single output GPX file.
 
 ## Parameters:
 
-**url:** required. The url to a portal feature layer. This should end in 'FeatureService/n' where n is the layer index.
+**content:** required. In a GET request can be a comma-separated list of itemIds for one or more ArcGIS Online Route Layers or the url to a portal feature layer of point or polyline geometry. in a POST request, this may only be the url to a feature layer. This string should begin with 'https://' and end in 'FeatureService/n' where n is the layer index.
+
+**title:** The name of the GPX file to be returned. Required if processing multiple routes or feature layers.
 
 **returnFile:**  optional. If true, returns a GPX file. If false, returns a string. Defaults to true.
 
@@ -124,11 +125,8 @@ POST requests will accept an array of JSON objects each containing one value for
 **number:** optional. The name of the field in the feature layer that should provide the number values for each trkType element. Ignored for point layers.
 
 **example GET request:**
-https://arcgis2gpx.azurewebsites.net/api/Layers2GPX?url=https://maps.arcgis.com/ArcGIS/rest/services/<<service name>>/FeatureServer/<<layer index>>&returnFile=true&name=featureNameField
-
-Additionally, POST requests include the following:
-
-**title:** required. The name of the GPX file to be returned.
+https://arcgis2gpx.azurewebsites.net/api/Layers2GPX?content=b8ca350685f046f6b70f2fecc6b23f9c,e8e4304938d74919b71ed0a64e6ddf2b&title=NewRouteLayerGPXFile
+https://arcgis2gpx.azurewebsites.net/api/Layers2GPX?content=https://maps.arcgis.com/ArcGIS/rest/services/<<service name>>/FeatureServer/<<layer index>>&returnFile=false&name=featureNameField&title=NewFeatureLayerGPXFile
 
 **example POST request payload:**
 ````
