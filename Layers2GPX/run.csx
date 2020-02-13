@@ -76,7 +76,7 @@ public static async Task<IActionResult> Run(HttpRequest req, ILogger log)
     errorHelp += "GET requests will accept one value for each of the parameters except the 'content' parameter which will accept a comma-separated list of route layer itemIds or the url to a single feature layer.\n";
     errorHelp += "POST requests will accept an array of JSON objects each containing a value for each included parameter. This allows you to combine multiple point and/or polyline feature layers into a single output GPX file.\n\n";
     errorHelp += "Parameters:\n";
-    errorHelp += "content: required. In a GET request can be a comma-separated list of itemIds for one or more ArcGIS Online Route Layers or the url to a portal feature layer of point or polyline geometry. in a POST request, this may only be the url to a feature layer. This string should begin with 'https://' and end in 'FeatureService/n' where n is the layer index.\n\n";
+    errorHelp += "content: required. In a GET request can be a comma-separated list of itemIds for one or more ArcGIS Online Route Layers or the url to a portal feature layer of point or polyline geometry. In a POST request, this may only be the url to a feature layer. This string should begin with 'https://' and end in 'FeatureService/n' where n is the layer index.\n\n";
     //errorHelp += "url: required if no routes. The url to a portal feature layer. This should end in 'FeatureService/n' where n is the layer index. Ignored if converting Route Layers.\n";
     errorHelp += "title: The name of the GPX file to be returned. Required if processing multiple routes or feature layers.\n";
     errorHelp += "returnFile: optional. If true, returns a GPX file. If false, returns a string. Defaults to true.\n";
@@ -104,7 +104,7 @@ public static async Task<IActionResult> Run(HttpRequest req, ILogger log)
     errorHelp += string.Format("{0}{1}{2}\n\n",reqUrl,"?","content=https://maps.arcgis.com/ArcGIS/rest/services/<<service name>>/FeatureServer/<<layer index>>&returnFile=false&name=featureNameField&title=NewFeatureLayerGPXFile");
     errorHelp += string.Format("\n\nExample POST request payload:\n");
     //string payload = "{\"title\":\"A new GPX file\",\"returnFile\":false,\"layers\":[{\"url\":\"https://maps.arcgis.com/ArcGIS/rest/services/<<service name>>/FeatureServer/<<layer index>>\",\"name\":\"myNameField1\",\"desc\":\"myDescField1\",\"cmt\":\"myCmtField1\",\"sym\":\"mySymField1\"},{\"url\":\"https://maps.arcgis.com/ArcGIS/rest/services/<<service name>>/FeatureServer/<<layer index>>\",\"name\":\"myNameField2\",\"desc\":\"myDescField2\"},{\"url\":\"https://maps.arcgis.com/ArcGIS/rest/services/<<service name>>/FeatureServer/<<layer index>>\",\"name\":\"myNameField3\",\"desc\":\"myDescField3\",\"cmt\":\"myCmtField3\"}]}";
-    string payload2 = "{\"title\":\"Some Trails\",\"returnFile\":\"true\",\"layers\":[{\"content\":\"https://services1.arcgis.com/1YRV70GwTj9GYxWK/arcgis/rest/services/Waterfalls/FeatureServer/1\",\"name\":\"TITLE\"},{\"url\":\"https://services1.arcgis.com/EvDRLcHhbHG5BnwT/arcgis/rest/services/Hiking_Routes/FeatureServer/0\",\"name\":\"Name\",\"desc\":\"Description\",\"where\":\"AscentFT>3600\"},{\"url\":\"https://services1.arcgis.com/1YRV70GwTj9GYxWK/arcgis/rest/services/BMW_RA_Rally_Fuel_and_Food/FeatureServer/0\",\"name\":\"name\",\"desc\":\"Address\"}]}";
+    string payload2 = "{\"title\":\"Some Trails\",\"returnFile\":\"true\",\"layers\":[{\"content\":\"https://services1.arcgis.com/1YRV70GwTj9GYxWK/arcgis/rest/services/Waterfalls/FeatureServer/1\",\"name\":\"TITLE\"},{\"content\":\"https://services1.arcgis.com/EvDRLcHhbHG5BnwT/arcgis/rest/services/Hiking_Routes/FeatureServer/0\",\"name\":\"Name\",\"desc\":\"Description\",\"where\":\"AscentFT>3600\"},{\"content\":\"https://services1.arcgis.com/1YRV70GwTj9GYxWK/arcgis/rest/services/BMW_RA_Rally_Fuel_and_Food/FeatureServer/0\",\"name\":\"name\",\"desc\":\"Address\"}]}";
     string jsonFormatted = JValue.Parse(payload2).ToString(Formatting.Indented);
     errorHelp += jsonFormatted;
 
@@ -471,7 +471,7 @@ public static async Task<IActionResult> Run(HttpRequest req, ILogger log)
         //Do all the point layers first, then loop through againanad do the polyline layers.
         for (int i=0;i<2;i++){ 
             foreach (JObject layer in layers.Children<JObject>()) {
-                serviceUrl = (string)layer["url"];
+                serviceUrl = (string)layer["content"];
                 serviceInfoUrl = serviceUrl.Substring(0,serviceUrl.LastIndexOf("/"))+"/info/itemInfo?f=pjson";
                 //log.LogInformation(serviceInfoUrl);
                 serviceQueryUrl = serviceUrl+"?f=pjson";
