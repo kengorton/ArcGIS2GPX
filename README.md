@@ -20,17 +20,17 @@ https://arcgis2gpx.azurewebsites.net/api/Layers2GPX
 
  
 
-It takes GET or POST requests and accepts point or polyline feature layers. The features in point feature layers become GPX waypoints while the features in polyline feature layers become GPX tracks.
+It takes GET or POST requests and accepts route layers or point or polyline feature layers. If using route layers, the DirectionPoints sublayer for each route layer will be included in the collection of waypoints in the output GPX file while the DirectionLines sublayer for each route layer becomes a separate output track. The features in point feature layers become GPX waypoints while the features in polyline feature layers become GPX tracks.
 
  
 
-The minimum parameters required for GET requests is the url to a point or polyline feature layer. Thus you can create a URL for a hyperlink in a web page, storymap or other document as follows: 
+The minimum parameters required for GET requests is one or more itemIds to ArcGIS route layers, each separated by a comma, or the url to a point or polyline feature layer. Thus you can create a URL for a hyperlink in a web page, storymap or other document as follows: 
 
-https://arcgis2gpx.azurewebsites.net/api/Layers2GPX?url=https://services1.arcgis.com/EvDRLcHhbHG5BnwT/arcgis/rest/services/Hiking_Routes/FeatureServer/0&name=Name&desc=Description
+https://arcgis2gpx.azurewebsites.net/api/Layers2GPX?content=https://services1.arcgis.com/EvDRLcHhbHG5BnwT/arcgis/rest/services/Hiking_Routes/FeatureServer/0&name=Name&desc=Description
 
 or
 
-https://arcgis2gpx.azurewebsites.net/api/Layers2GPX?url=https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/Appalachian_National_Scenic_Trail/FeatureServer/0 
+https://arcgis2gpx.azurewebsites.net/api/Layers2GPX?content=https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/Appalachian_National_Scenic_Trail/FeatureServer/0 
 
  
 
@@ -41,13 +41,13 @@ The minimum payload for a POST request is a json object with a title element (wh
  "returnFile":"true",
  "layers":[
  {
- "url":"https://services1.arcgis.com/EvDRLcHhbHG5BnwT/arcgis/rest/services/Hiking_Routes/FeatureServer/0",
+ "content":"https://services1.arcgis.com/EvDRLcHhbHG5BnwT/arcgis/rest/services/Hiking_Routes/FeatureServer/0",
  "name":"Name",
  "desc":"Description",
  "where":"AscentFT>3600"
  },
  {
- "url":"https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/Appalachian_National_Scenic_Trail/FeatureServer/0",
+ "content":"https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/Appalachian_National_Scenic_Trail/FeatureServer/0",
  "name":"Name",
  "desc":"Description",
  "where":"Length_Ft>40000"
@@ -80,7 +80,7 @@ POST requests will accept an array of JSON objects each containing a value for e
 
 ## Parameters:
 
-**content:** required. In a GET request can be a comma-separated list of itemIds for one or more ArcGIS Online Route Layers or the url to a portal feature layer of point or polyline geometry. in a POST request, this may only be the url to a feature layer. This string should begin with 'https://' and end in 'FeatureService/n' where n is the layer index.
+**content:** required. In a GET request can be a comma-separated list of itemIds for one or more ArcGIS Online Route Layers or the url to a portal feature layer of point or polyline geometry. In a POST request, this may only be the url to a feature layer. This string should begin with 'https://' and end in 'FeatureService/n' where n is the layer index.
 
 **title:** The name of the GPX file to be returned. Required if processing multiple routes or feature layers.
 
@@ -135,17 +135,17 @@ https://arcgis2gpx.azurewebsites.net/api/Layers2GPX?content=https://maps.arcgis.
   "returnFile": "true",
   "layers": [
     {
-      "url": "https://services1.arcgis.com/1YRV70GwTj9GYxWK/arcgis/rest/services/Waterfalls/FeatureServer/1",
+      "content": "https://services1.arcgis.com/1YRV70GwTj9GYxWK/arcgis/rest/services/Waterfalls/FeatureServer/1",
       "name": "TITLE"
     },
     {
-      "url": "https://services1.arcgis.com/EvDRLcHhbHG5BnwT/arcgis/rest/services/Hiking_Routes/FeatureServer/0",
+      "content": "https://services1.arcgis.com/EvDRLcHhbHG5BnwT/arcgis/rest/services/Hiking_Routes/FeatureServer/0",
       "name": "Name",
       "desc": "Description",
       "where": "AscentFT>3600"
     },
     {
-      "url": "https://services1.arcgis.com/1YRV70GwTj9GYxWK/arcgis/rest/services/BMW_RA_Rally_Fuel_and_Food/FeatureServer/0",
+      "content": "https://services1.arcgis.com/1YRV70GwTj9GYxWK/arcgis/rest/services/BMW_RA_Rally_Fuel_and_Food/FeatureServer/0",
       "name": "name",
       "desc": "Address"
     }
