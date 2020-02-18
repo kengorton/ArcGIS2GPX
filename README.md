@@ -20,7 +20,7 @@ https://arcgis2gpx.azurewebsites.net/api/Layers2GPX
 
  
 
-It takes GET or POST requests and accepts route layers or point or polyline feature layers. If using route layers, the DirectionPoints sublayer for each route layer will be included in the collection of waypoints in the output GPX file while the DirectionLines sublayer for each route layer becomes a separate output track. The features in point feature layers become GPX waypoints while the features in polyline feature layers become GPX tracks.
+It takes GET or POST requests and accepts route layers or point or polyline feature layers. If using route layers, the DirectionPoints sublayer for each route layer will be included in the collection of waypoints nd routes in the output GPX file while the DirectionLines sublayer for each route layer becomes a separate output track. The features in point feature layers become GPX waypoints while the features in polyline feature layers become GPX tracks. If using point feature layers, it will not generate routes.
 
  
 
