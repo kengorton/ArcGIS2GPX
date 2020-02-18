@@ -124,6 +124,12 @@ POST requests will accept an array of JSON objects each containing a value for e
 
 **number:** optional. The name of the field in the feature layer that should provide the number values for each trkType element. Ignored for point layers.
 
+**waypoints:** optional boolean. If true, processes the DirectionPoints sublayer of input Route Layers into GPX waypoints. If false, the output will not include waypoints. Applies only to Route Layers. Defaults to true.
+
+**routes:** optional boolean. If true, processes the DirectionPoints sublayer of input Route Layers into GPX routes. If false, the output will not include routes. Applies only to Route Layers. Defaults to true.
+
+**tracks:** optional boolean. If true, processes the DirectionLines sublayer of input Route Layers into GPX tracks. If false, the output will not include tracks. Applies only to Route Layers. Defaults to true.
+
 **example GET request:**
 https://arcgis2gpx.azurewebsites.net/api/Layers2GPX?content=b8ca350685f046f6b70f2fecc6b23f9c,e8e4304938d74919b71ed0a64e6ddf2b&title=NewRouteLayerGPXFile
 https://arcgis2gpx.azurewebsites.net/api/Layers2GPX?content=https://maps.arcgis.com/ArcGIS/rest/services/<<service name>>/FeatureServer/<<layer index>>&returnFile=false&name=featureNameField&title=NewFeatureLayerGPXFile
