@@ -14,6 +14,7 @@ The routes in this storymap were created using the Directions widget in the stan
 If anyone is interested you can leverage a similar capability in your own storymaps or other applications using this function:
 
 https://arcgis2gpx.azurewebsites.net/api/Layers2GPX
+
 configure a hyperlink for your document, html page or storymap by adding you route layer ids to this url as in the following example: 
 https://arcgis2gpx.azurewebsites.net/api/Layers2GPX?content=e8e4304938d74919b71ed0a64e6ddf2b
 The content paramemter should be the itemId for a route layer in ArcGIS online. It can also be a comma-separated list of route layers. If several are included, you must also include a filename parameter to name the output file: 
