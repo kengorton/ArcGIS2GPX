@@ -9,7 +9,7 @@ You can see the results in this storymap:
 
 The 2020 BMW RA Rally (https://storymaps.arcgis.com/stories/75ef83f01c424d95bf75a7e28d4d1608)
 
-The routes in this storymap were created using the Directions widget in the standard ArcGIS Online web map viewer. The itemIDs to those route layers are configured as parameters in the links in each of the 'Download GPX file' buttons in the storymap.
+The routes in this storymap were created using the Directions widget in the standard ArcGIS Online web map viewer. The itemIds to those route layers are configured as parameters in the links in each of the 'Download GPX file' buttons in the storymap.
 
 If anyone is interested you can leverage a similar capability in your own storymaps or other applications using this function:
 
@@ -17,7 +17,7 @@ https://arcgis2gpx.azurewebsites.net/api/Layers2GPX
 
 configure a hyperlink for your document, html page or storymap by adding you route layer ids to this url as in the following example: 
 https://arcgis2gpx.azurewebsites.net/api/Layers2GPX?content=e8e4304938d74919b71ed0a64e6ddf2b
-The content paramemter should be the itemId for a route layer in ArcGIS online. It can also be a comma-separated list of route layers. If several are included, you must also include a filename parameter to name the output file: 
+The content parameter should be the itemId for a route layer in ArcGIS online. It can also be a comma-separated list of route layers. If several are included, you must also include a filename parameter to name the output file: 
 
 If only one route is included, the output file will be named from the route layer.
 
