@@ -50,6 +50,12 @@ public static async Task<IActionResult> Run(HttpRequest req, ILogger log)
     string returnFile = "";
     bool sendFile = true;
     string filename = "";
+    string wpts = "";
+    bool doWpts = true;
+    string rts = "";
+    bool doRts = true;
+    string trks = "";
+    bool doTrks = true;
     
     string method = req.Method;
     HttpClient client = new HttpClient();
@@ -66,6 +72,11 @@ public static async Task<IActionResult> Run(HttpRequest req, ILogger log)
         new XAttribute(XNamespace.Xmlns+"xsi",xsi.NamespaceName),
         new XAttribute(xsi+"schemaLocation",gpx1.NamespaceName + " " + gpx2.NamespaceName));
 
+    XElement m = new XElement("metadata",  
+        new XElement("name", "")  
+    );         
+    g.Add(m);
+
     XDocument d = new XDocument(new XDeclaration("1.0", "utf-8", "true"),g);
     
 
@@ -79,7 +90,7 @@ public static async Task<IActionResult> Run(HttpRequest req, ILogger log)
     errorHelp += "content: required. In a GET request can be a comma-separated list of itemIds for one or more ArcGIS Online Route Layers or the url to a portal feature layer of point or polyline geometry. In a POST request, this may only be the url to a feature layer. This string should begin with 'https://' and end in 'FeatureService/n' where n is the layer index.\n\n";
     //errorHelp += "url: required if no routes. The url to a portal feature layer. This should end in 'FeatureService/n' where n is the layer index. Ignored if converting Route Layers.\n";
     errorHelp += "title: The name of the GPX file to be returned. Required if processing multiple routes or feature layers.\n";
-    errorHelp += "returnFile: optional. If true, returns a GPX file. If false, returns a string. Defaults to true.\n";
+    errorHelp += "returnFile: optional boolean. If true, returns a GPX file. If false, returns a string. Defaults to true.\n";
     errorHelp += "where: optional. The where clause to limit the features included in the GPX data. Defaults '1=1'. Ignored if converting Route Layers.\n";
     errorHelp += "name: optional. The name of the field in the feature layer that should provide the name values for each track or waypoint element. Ignored if converting Route Layers.\n";
     errorHelp += "cmt: optional. The name of the field in the feature layer that should provide the cmt values for each track or waypoint element. Ignored if converting Route Layers.\n";
@@ -99,6 +110,9 @@ public static async Task<IActionResult> Run(HttpRequest req, ILogger log)
     errorHelp += "ageofgpsdata: optional. The name of the field in the feature layer that should provide the ageofgpsdata values for each wptType element. Ignored for polyline layers. Ignored if converting Route Layers.\n";
     errorHelp += "dgpsid: optional. The name of the field in the feature layer that should provide the dgpsid values for each wptType element. Ignored for polyline layers. Ignored if converting Route Layers.\n";
     errorHelp += "number: optional. The name of the field in the feature layer that should provide the number values for each trkType element. Ignored for point layers. Ignored if converting Route Layers.\n";
+    errorHelp += "waypoints: optional boolean. If true, processes the DirectionPoints sublayer of input Route Layers into GPX waypoints. If false, the output will not include waypoints. Applies only to Route Layers. Defaults to true.\n";
+    errorHelp += "routes: optional boolean. If true, processes the DirectionPoints sublayer of input Route Layers into GPX routes. If false, the output will not include routes. Applies only to Route Layers. Defaults to true.\n";
+    errorHelp += "tracks: optional boolean. If true, processes the DirectionLines sublayer of input Route Layers into GPX tracks. If false, the output will not include tracks. Applies only to Route Layers. Defaults to true.\n";
     errorHelp += string.Format("\n\nExample GET request:\n");
     errorHelp += string.Format("{0}{1}{2}\n\n",reqUrl,"?","content=b8ca350685f046f6b70f2fecc6b23f9c,e8e4304938d74919b71ed0a64e6ddf2b&title=NewRouteLayerGPXFile");
     errorHelp += string.Format("{0}{1}{2}\n\n",reqUrl,"?","content=https://maps.arcgis.com/ArcGIS/rest/services/<<service name>>/FeatureServer/<<layer index>>&returnFile=false&name=featureNameField&title=NewFeatureLayerGPXFile");
@@ -112,6 +126,7 @@ public static async Task<IActionResult> Run(HttpRequest req, ILogger log)
     string resultContent = "";
     JObject details;
     string title = "";
+    string snippet = "";
 
     if (method == "GET"){
 
@@ -148,10 +163,25 @@ public static async Task<IActionResult> Run(HttpRequest req, ILogger log)
         
         if (string.IsNullOrEmpty(filename) && itemIds.Length > 1){
             return new BadRequestObjectResult("Missing required parameter 'Title'. When processing multiple routes or layers this value will be used to name the GPX file to be downloaded."+errorHelp);
-        }        
+        }  
+        
+        if(m.Element("name").Value == "" && !string.IsNullOrEmpty(filename)){
+            m.Element("name").Value = filename;
+        }       
         
         returnFile = req.Query["returnFile"];
-        sendFile = string.IsNullOrEmpty(returnFile) ? true : Convert.ToBoolean(returnFile);
+        sendFile = string.IsNullOrEmpty(returnFile) ? true : Convert.ToBoolean(returnFile);      
+        
+        wpts = req.Query["waypoints"];
+        doWpts = string.IsNullOrEmpty(wpts) ? true : Convert.ToBoolean(wpts);      
+        
+        rts = req.Query["routes"];
+        doRts = string.IsNullOrEmpty(rts) ? true : Convert.ToBoolean(rts);      
+        
+        trks = req.Query["tracks"];
+        doTrks = string.IsNullOrEmpty(trks) ? true : Convert.ToBoolean(trks);
+
+
  
         
         //is it a Route Layer?
@@ -161,7 +191,7 @@ public static async Task<IActionResult> Run(HttpRequest req, ILogger log)
             //log.LogInformation("Routes");
 
         
-            for (int i=0;i<2;i++){
+            for (int i=0;i<3;i++){
                 foreach (string itemId in itemIds){
                     string agolSharingUrl = "https://www.arcgis.com/sharing/rest/content/items/";
                     string routeLayerInfoUrl = agolSharingUrl + itemId + "?f=json";
@@ -182,14 +212,18 @@ public static async Task<IActionResult> Run(HttpRequest req, ILogger log)
                     
                     
                     title =  (string)details["title"]; 
+                    snippet =  (string)details["snippet"]; 
                     if (string.IsNullOrEmpty(filename)){
                         filename = title;
+                    }
+                    if(m.Element("name").Value == ""){
+                        m.Element("name").Value = title;
                     }  
-                    g.Add(new XElement("metadata",  
-                        new XElement("name", filename)  
-                    ));                 
+                    //g.Add(new XElement("metadata",  
+                    //    new XElement("name", filename)  
+                    //));                 
                     JArray typeKeywords =  (JArray)details["typeKeywords"];
-                    log.LogInformation(typeKeywords.ToString());
+                    //log.LogInformation(typeKeywords.ToString());
 
                     if (!typeKeywords.ToString().Contains("Route Layer")){
                         continue;
@@ -204,7 +238,7 @@ public static async Task<IActionResult> Run(HttpRequest req, ILogger log)
 
 
                     foreach (JObject layer in layers){
-                        if ((string)layer["layerDefinition"]["name"] == "DirectionPoints" && i==0){
+                        if ((string)layer["layerDefinition"]["name"] == "DirectionPoints" && i==0 && doWpts){
                             
                             //TODO process Stops data
                             JArray points = (JArray)layer["featureSet"]["features"];
@@ -241,21 +275,64 @@ public static async Task<IActionResult> Run(HttpRequest req, ILogger log)
                                     new XElement("desc",(string)f["attributes"]["DisplayText"])
                                                                         
                                 );
-                                if(itemIds.Length>1){
-                                    w.Add(new XElement("cmt",String.Format("From route: {0}",title)));
-                                }
+                                w.Add(new XElement("src",String.Format("From: {0}",snippet)));
+                                //if(itemIds.Length>1){
+                                //    w.Add(new XElement("cmt",.Format("From: {0}",title)));
+                                //}String
                                 g.Add(w); 
                                 count++;
                             }
                         }
+
+                        if ((string)layer["layerDefinition"]["name"] == "DirectionPoints" && i==1 && doRts){
+                            
+                            JArray points = (JArray)layer["featureSet"]["features"];
+                            int count = 1;
+                            XElement r = new XElement("rte",new XElement("name",title));
+                            r.Add(new XElement("src",String.Format("From: {0}",snippet)));
+                            g.Add(r);
+
+                            foreach (JObject f in points.Children<JObject>()){
+
+                                string rptName = (string)f["attributes"]["DisplayText"];  
+                                if(string.IsNullOrEmpty(rptName)||string.IsNullOrWhiteSpace(rptName)||rptName=="null"){
+                                    rptName = String.Format("{0} Routepoint {1}",title,(string)f["attributes"]["Sequence"]);
+                                }
+
+                                //project the point to WGS84 4326                                
+                                double x = (double)f["geometry"]["x"];
+                                double y = (double)f["geometry"]["y"];
+
+                                double num3 = x / 6378137.0;
+                                double num4 = num3 * 57.295779513082323;
+                                double num5 = Math.Floor((double)((num4 + 180.0) / 360.0));
+                                double num6 = num4 - (num5 * 360.0);
+                                double num7 = 1.5707963267948966 - (2.0 * Math.Atan(Math.Exp((-1.0 * y) / 6378137.0)));
+                                x = num6;
+                                y = num7 * 57.295779513082323;
+
+
+                                XElement w = new XElement("rtept",
+                                            new XAttribute("lat",y),
+                                            new XAttribute("lon",x),
+                                    new XElement("name",rptName)                                                                        
+                                );
+                                //if(itemIds.Length>1){
+                                //    w.Add(new XElement("cmt",String.Format("From: {0}",title)));
+                                //}
+                                r.Add(w); 
+                                count++;
+                            }
+                        }
                         
-                        if ((string)layer["layerDefinition"]["name"] == "DirectionLines" && i==1){
+                        if ((string)layer["layerDefinition"]["name"] == "DirectionLines" && i==2 && doTrks){
                             
                             //TODO process DirectionLines data
                             JArray lines = (JArray)layer["featureSet"]["features"];
                             //log.LogInformation("Made it this far");
                             if (lines.Count > 0){
-                                XElement t = new XElement("trk",new XElement("name",title));
+                                XElement t = new XElement("trk",new XElement("name",title));                                
+                                t.Add(new XElement("src",String.Format("From: {0}",snippet)));
                                 g.Add(t);
                                 foreach (JObject f in lines.Children<JObject>()){                                   
                                     
